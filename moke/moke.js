@@ -34,7 +34,7 @@ app.get('/admin/edu/subject/:page/:limit', (req, res) => {
     //Random.integer(min,max)返回min到max的随机数
     total: Random.integer(limit, limit * 2),
     // 数组长度是limit
-    // item|3 表示item字段指向的数组的长度
+    // item|num 表示item字段指向的数组的长度
     [`items|${limit}`]: [
       {
         // _id初始值为1, +1表示会递增
