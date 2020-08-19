@@ -1,6 +1,15 @@
 import request from "@utils/request";
 
 const BASE_URL = "/admin/edu/subject";
+// 删除课程分类数据
+// http://localhost:5000/admin/edu/subject/remove/:id  DELETE
+export function delSubjectList(id) {
+  return request({
+    url: `${BASE_URL}/remove/${id}`,
+    method: "DELETE",
+  });
+}
+
 // const Moke_URL = "http://localhost:8080/admin/edu/subject"
 // 获取一级课程分类列表
 // /admin/edu/subject/:page/:limit
@@ -33,7 +42,7 @@ export function reqAddSubjectList(title,parentId) {
 
 // 更新课程分类
 // http://localhost:5000/admin/edu/subject/update
-export function updataSubjectList(id,title) {
+export function reqUpdateSubjectList(id,title) {
   return request({
     url: `${BASE_URL}/update`,
     method: "PUT",

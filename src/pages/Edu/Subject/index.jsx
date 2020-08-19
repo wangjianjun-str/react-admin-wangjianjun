@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import {connect} from "react-redux"
-import {getSubjectList,getSecSubjectList,updateSubjectList} from "./redux/index"
-import {Button,Table,Input, message} from "antd"
+import {getSubjectList,getSecSubjectList,updateSubjectList,deleteSubjectList} from "./redux/index"
+import {Button,Table,Input, message, Modal} from "antd"
 import { PlusOutlined,FormOutlined,DeleteOutlined } from '@ant-design/icons'
 // import {updataSubjectList} from "@api/edu/subject"
 import "./index.less"
 
 
 
-@connect(state=>({subjectList:state.subjectList}),{getSubjectList,getSecSubjectList,updateSubjectList})
+@connect(state=>({subjectList:state.subjectList}),{getSubjectList,getSecSubjectList,updateSubjectList,deleteSubjectList})
  class Subject extends Component {
    state={
      subjectid:'',
@@ -75,6 +75,35 @@ import "./index.less"
       title:"",
     })
   }
+  // 点击删除
+  handleDelete=record=>()=>{
+    Modal.confirm({
+      title:(
+        <div>
+          你确定要删除
+      <span style={{color:"red",margin:"0 10px"}}>{record.title}</span>
+        </div>
+      ),
+      onOk:async()=>{
+        await this.props.deleteSubjectList(record._id)
+        message.success("删除成功")
+        
+        // 如果是删除的只有一条数据点击删除之后就发请求去上一页
+        // 同时要保证当前页码要大于1才能去上一页
+        // 同时判断当前页是否删除完毕了
+        // 同时我们只需要一级分类的时候删除的时候去发请求到上一页
+        if(record.parentId === "0"){
+          if(this.page>1 && this.props.subjectList.items.length <=0 && record.parentId === "0"){
+            this.props.getSubjectList(--this.page,5)
+          }else{
+            this.props.getSubjectList(this.page,5)
+          }
+        }
+       }
+    })
+
+    
+  }
   render() {
     const columns = [
       { title: '分类课程',  key: 'name' ,
@@ -103,7 +132,7 @@ import "./index.less"
           return(
           <>
             <Button icon={<FormOutlined />} type="primary" style={{marginRight:20,width:50}} onClick={this.handleUpdate(record)}></Button>
-            <Button icon={<DeleteOutlined />} type="danger" style={{width:50}}></Button>
+            <Button icon={<DeleteOutlined />} type="danger" style={{width:50}} onClick={this.handleDelete(record)}></Button>
           </>)
         }
 

@@ -1,28 +1,39 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Form, Select, Button } from "antd";
-
+import {getCourseList,getChapterList} from "../redux/index"
 import "./index.less";
+import { connect } from "react-redux";
+
+
 
 const { Option } = Select;
 
-function SearchForm() {
+
+
+
+function SearchForm(props) {
   const [form] = Form.useForm();
 
   const resetForm = () => {
     form.resetFields();
   };
-
+  useEffect(()=>{
+    props.getCourseList()
+  },[])
+  const onFinish=values=>{
+    console.log(values)
+    // 获取章节数据存到redux中
+    props.getChapterList(values.courseId)
+  }
   return (
-    <Form layout="inline" form={form}>
-      <Form.Item name="teacherId" label="课程">
+    <Form layout="inline" form={form} onFinish={onFinish}>
+      <Form.Item name="courseId" label="课程">
         <Select
           allowClear
           placeholder="课程"
           style={{ width: 250, marginRight: 20 }}
         >
-          <Option value="1">1</Option>
-          <Option value="2">2</Option>
-          <Option value="3">3</Option>
+          {props.courseList.map(item=>{return <Option value={item._id} key={item._id}>{item.title}</Option>})}
         </Select>
       </Form.Item>
       <Form.Item>
@@ -39,4 +50,4 @@ function SearchForm() {
   );
 }
 
-export default SearchForm;
+export default connect(state=>({courseList:state.chapterList.allCourseList,chapterList:state.chapterList.chapterList}),{getCourseList,getChapterList,})(SearchForm);

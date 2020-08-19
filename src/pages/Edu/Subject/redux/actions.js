@@ -1,16 +1,38 @@
 import {
   reqSubjectList,
   reqSecSubjectList,
-  updataSubjectList,
+  reqUpdateSubjectList,
+  delSubjectList,
 } from "@api/edu/subject";
 
 import {
   GET_SUBJECT_LIST,
   GET_SEC_SUBJECT_LIST,
   UPDATE_SUBJECT,
+  DELETE_SUBJECT,
 } from "./constants";
 
-// 
+
+// 删除课程分类
+const delSubjectListSync = (data) => ({
+  type: DELETE_SUBJECT,
+  data,
+});
+
+export const deleteSubjectList = (id) => {
+  return (dispatch) => {
+    return delSubjectList(id).then((response) => {
+      dispatch(delSubjectListSync(id));
+      return response.total;
+    });
+  };
+};
+
+
+
+
+
+// 更新课程分类数据
 const updateSubjectListSync = (data) => ({
   type: UPDATE_SUBJECT,
   data,
@@ -18,7 +40,7 @@ const updateSubjectListSync = (data) => ({
 
 export const updateSubjectList = (id,title) => {
   return (dispatch) => {
-    return updataSubjectList(id,title).then((response) => {
+    return reqUpdateSubjectList(id,title).then((response) => {
       dispatch(updateSubjectListSync({id,title}));
       return response.total;
     });
@@ -38,6 +60,7 @@ const getSubjectListSync = (list) => ({
 export const getSubjectList = (page,limit) => {
   return (dispatch) => {
     return reqSubjectList(page,limit).then((response) => {
+      console.log(response)
       dispatch(getSubjectListSync(response));
       return response.total;
     });

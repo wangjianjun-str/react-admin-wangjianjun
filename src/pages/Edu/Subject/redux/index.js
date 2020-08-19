@@ -3,6 +3,7 @@ import {
   getSubjectList,
   getSecSubjectList,
   updateSubjectList,
+  deleteSubjectList,
 } from "./actions";
 
 export {
@@ -10,4 +11,5 @@ export {
   getSubjectList,
   getSecSubjectList,
   updateSubjectList,
+  deleteSubjectList,
 };
