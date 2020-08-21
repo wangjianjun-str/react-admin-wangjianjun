@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { getLessonList } from "./redux"
+import {connect} from 'react-redux'
 import { Button, message, Tooltip, Modal, Alert, Table } from "antd";
+import {getAllLessonList} from "./redux"
 import {
   FullscreenOutlined,
   RedoOutlined,
@@ -11,24 +12,14 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-
 import relativeTime from "dayjs/plugin/relativeTime";
-
-import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
-
 import "./index.less";
-
 dayjs.extend(relativeTime);
 
-
-@connect(
-  (state) => ({
-    chapterList:state.chapterList.chapterList
-  }),
-   { getLessonList }
+@connect( state=>({chapterList:state.chapterList.chapterList}),
+{getAllLessonList}
 )
-
 class Chapter extends Component {
   state = {
     searchLoading: false,
@@ -93,25 +84,42 @@ class Chapter extends Component {
   getLessonList=(expanded,record)=>{
     // console.log(expanded,record) 
     if(expanded){
-      this.props.getLessonList(record._id)
+      this.props.getAllLessonList(record._id)
     }
   }
+
+  // 跳转到新增课时
+  handleGoAddLesson=(data)=>()=>{
+    this.props.history.push("/edu/chapter/addlesson",data)
+  }
   render() {
-
+    const {chapterList:{items}} = this.props
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
-
     const columns = [
       {
         title: "章节名称",
         dataIndex: "title",
-
       },
-
       {
         title: "是否免费",
         dataIndex: "free",
+        // 注意：如果不写dataIndex的时候，render指向的函数接收的数据，肯定是一行数据，但是如果dataIndx写值了，那么render指向的函数接收的数据就是一行数据中的指定了某一个属性的值
+        // 比如 上面的dataIndex的值是free 那个render指向函数接收的数据就是一行数据中free属性的值
         render: (isFree) => {
-          return isFree === true ? "是" : isFree === false ? "否" : "";
+          // 如果是章节数据 isFree是undefined
+          // 如果是课时数据 isFree 返回的是布尔值
+          // return isFree === true ? "是" : isFree === false ? "否" : "";
+          if(isFree === true){
+            return (<><span>是</span></>)
+          }else{
+            if(isFree === false){
+              return (<><span>否</span></>)
+            }else{
+              return (<></>)
+            }
+          }
+          // 显示是否免费的逻辑 当渲染的是章节数据是，章节数据里边没有isFree属性，所以render指向函数接收到的参数是undefined  isFree为undefined  判断isFree为假 为假则走第二次判断 课时数据的isFree 的真假 如果为假 则显示空字符串，所以章节数据一开始不会显示是否选项
+          // 当渲染的是课时数据时，课时数据中是有isFree属性的先判断isFree的真假，如果为 true则显示是，如果为false 则走第二次判断，isFree的值为false判等时为真则显示‘否’
         },
       },
       {
@@ -129,11 +137,10 @@ class Chapter extends Component {
         width: 300,
         fixed: "right",
         render: (data) => {
-
             return (
               <div>
-                <Tooltip title="查看详情">
-                  <Button type="primary">
+                <Tooltip title="新增课时">
+                  <Button type="primary" onClick={this.handleGoAddLesson(data)}>
                     <PlusOutlined />
                   </Button>
                 </Tooltip>
@@ -149,7 +156,6 @@ class Chapter extends Component {
                 </Tooltip>
               </div>
             );
-          
         },
       },
     ];

@@ -1,18 +1,25 @@
-import {reqGetAllCourse} from "@api/edu/course"
+// 引入获取课程列表的api
+import {reqGetAllCourseList} from "@api/edu/course"
+// 获取章节分页列表
 import {reqGetChapterList} from "@api/edu/chapter"
+// 获取章节所有课时列表
 import {reqGetLessonList} from "@api/edu/lesson"
+// 引入常量
 import {GET_ALL_COURSE,GET_CHAPTERLIST,GET_LESSONLIST} from "./constants"
 
-function getLessonListSync(data){
+
+// 获取章节所有课时列表同步action
+function getAllLessonListSync(data){
   return {
-    type: GET_LESSONLIST,
+    type:GET_LESSONLIST,
     data
   }
 }
-export function getLessonList(chapterId){ 
+// 获取章节所有课时列表异步action
+export function getAllLessonList(chapterId){
   return dispatch=>{
-    reqGetLessonList(chapterId).then((res)=>{
-      dispatch(getLessonListSync({res,chapterId}))
+    return reqGetLessonList(chapterId).then(res=>{
+      dispatch(getAllLessonListSync({res,chapterId}))
     })
   }
 }
@@ -20,32 +27,37 @@ export function getLessonList(chapterId){
 
 
 
+
+// 获取章节分页列表的同步action
 function getChapterListSync(data){
   return {
-    type: GET_CHAPTERLIST,
+    type:GET_CHAPTERLIST,
     data
   }
 }
+
+// 获取章节分页列表action
 export function getChapterList(courseId){
   return dispatch=>{
-    reqGetChapterList(courseId).then((res)=>{
-      dispatch(getChapterListSync(res))
+    return reqGetChapterList(courseId).then(res=>{
+       dispatch(getChapterListSync({res,courseId}))
     })
   }
 }
 
 
-
-function getCourseListSync(data){
+// 定义同步action
+function getAllCourseListSync(data){
   return {
-    type: GET_ALL_COURSE,
+    type:GET_ALL_COURSE,
     data
   }
 }
-export function getCourseList(){
+// 获取课程列表action
+export function getAllCourseList(){
   return dispatch=>{
-    reqGetAllCourse().then((res)=>{
-      dispatch(getCourseListSync(res))
+    return reqGetAllCourseList().then(res=>{
+      dispatch(getAllCourseListSync(res))
     })
   }
 }
